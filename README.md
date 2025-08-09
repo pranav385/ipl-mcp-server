@@ -21,11 +21,11 @@
 
 ```
 .
-├── sql_insert.ipynb              # Loads JSON IPL data into MySQL database
+├── SQL Insert-Final.ipynb              # Loads JSON IPL data into MySQL database
 ├── mcp_server_main.ipynb         # MCP Server code using Flask + LLaMA 3 + SQL mapping
 ├── mcp_server_main.py            # Converted script from the notebook to run the server
 ├── tables.sql                    # SQL file to create all tables
-├── IPL/                          # Folder containing IPL match JSON files
+├── IPL_10/                          # Folder containing IPL match JSON files
 └── README.md                     # This file
 ```
 
@@ -62,17 +62,15 @@ pip install flask pandas rapidfuzz mysql-connector-python requests
 ### 3. 🧱 Create MySQL Database & Tables
 
 * Ensure MySQL is running on your system.
-* Create a database named `cric_data`.
-* Use the `tables.sql` file to create all necessary tables.
+* Use the `tables.sql` file to create database(cric_data) and all necessary tables.
 
 ```sql
-CREATE DATABASE cric_data;
 -- Run the SQL schema from tables.sql
 ```
 
 ### 4. 🏏 Load IPL Data
 
-Edit the following fields in `sql_insert.ipynb`:
+Edit the following fields in `SQL Insert-Final.ipynb`:
 
 ```python
 host="127.0.0.1",
