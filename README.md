@@ -76,6 +76,7 @@ Update DB credentials in the notebooks / scripts as needed.
 - Install Ollama: https://ollama.com/  
 - Launch the model:
 ~~~
+ollama pull llama3
 ollama run llama3
 ~~~
 
