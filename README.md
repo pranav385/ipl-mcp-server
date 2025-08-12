@@ -140,6 +140,19 @@ Response
 
 ~~~
 
+### Explanation of `mapped_question` field
+
+- In the **first example**, the user’s question is `"what was the highest total score"`, which **exactly matches** one of the predefined template questions or intents in the MCP server’s mapping logic. Because it’s already a recognized, canonical question, the server sets `"mapped_question": null` to indicate no further mapping was needed.
+
+- In the **second example**, the user asked `"highest total score"` — a shorter, less formal phrase. The server uses the LLaMA 3 model to find the **closest matching canonical question** it understands, which in this case is `"what was the highest total score"`. So the `"mapped_question"` field contains that canonical question, showing how LLaMA 3 interpreted and mapped the user’s input before querying the database.
+
+In other words:
+
+| `mapped_question` value | Meaning                                                |
+|------------------------|--------------------------------------------------------|
+| `null`                 | User’s question already matches a known canonical question — no mapping needed. |
+| `<string>`             | The server (using LLaMA 3) mapped the user’s input to this canonical question before querying the database. |
+
 ---
 
 # 🔍 Sample Supported Questions
