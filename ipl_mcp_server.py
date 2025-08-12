@@ -226,7 +226,7 @@ db_config = {
     "host": "127.0.0.1",
     "port": 3306,
     "user": "root",
-    "password": "your_password",
+    "password": "82107",
     "database": "ipl_data",
     "ssl_disabled": True
 }
@@ -704,15 +704,15 @@ Thread(target=run_flask).start()
 # In[25]:
 
 
-import requests
+# import requests
 
-response = requests.post(
-    "http://127.0.0.1:5000/query",
-    json={"question": "highest run chase"}
-)
+# response = requests.post(
+#     "http://127.0.0.1:5000/query",
+#     json={"question": "highest run chase"}
+# )
 
 
-(response.json())
+# (response.json())
 
 
 # In[ ]:
