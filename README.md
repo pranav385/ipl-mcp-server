@@ -92,11 +92,52 @@ python ipl_mcp_server.py
 The server listens on: `http://127.0.0.1:5000`
 
 ## 7. Test the server
-Example `curl` request:
+Example 1 `curl` request:
 ~~~
 curl -X POST http://127.0.0.1:5000/query \
      -H "Content-Type: application/json" \
      -d '{"question": "what was the highest total score"}'
+~~~
+
+Response 
+~~~
+{
+  "mapped_question": null,
+  "question": "what was the highest total score",
+  "result": [
+    {
+      "inning_num": 1,
+      "match_id": "1473439",
+      "team_name": "Sunrisers Hyderabad",
+      "total_runs": "286"
+    }
+  ]
+}
+
+~~~
+
+Example 2 `curl` request:
+~~~
+curl -X POST http://127.0.0.1:5000/query \
+     -H "Content-Type: application/json" \
+     -d '{"question": "highest total score"}'
+~~~
+
+Response 
+~~~
+{
+  "mapped_question": "what was the highest total score",
+  "question": "highest total score",
+  "result": [
+    {
+      "inning_num": 1,
+      "match_id": "1473439",
+      "team_name": "Sunrisers Hyderabad",
+      "total_runs": "286"
+    }
+  ]
+}
+
 ~~~
 
 ---
