@@ -41,18 +41,30 @@ logging.basicConfig(
 
 
 
-# ### 🧠 Question Mapping Using Language Model API
-# 
-# This code defines a simple NLP-based assistant that maps a user's natural language question to a predefined list of known questions. 
-# 
-# - The `known_questions` list contains all supported queries the assistant can recognize.
-# - The `prompt_builder(user_main_question)` function constructs a prompt string for the language model. It asks the model to match the user's input with the most relevant known question.
-# - The `question_map(question)` function:
-#   - Sends the constructed prompt to a locally hosted LLaMA3 language model via a REST API (`http://localhost:11434/api/generate`).
-#   - Parses the response and returns the matched known question.
-#   - If the model responds with `"None"`, or if an error occurs (e.g., timeout, server issue), it returns `None`.
-# 
-# This mechanism is useful for handling flexible user input by grounding it to a fixed set of query types that can be handled downstream.
+# ### 🧠 Question Mapping Using Language Model API
+
+# 
+
+# This code defines a simple NLP-based assistant that maps a user's natural language question to a predefined list of known questions. 
+
+# 
+
+# - The `known_questions` list contains all supported queries the assistant can recognize.
+
+# - The `prompt_builder(user_main_question)` function constructs a prompt string for the language model. It asks the model to match the user's input with the most relevant known question.
+
+# - The `question_map(question)` function:
+
+#   - Sends the constructed prompt to a locally hosted LLaMA3 language model via a REST API (`http://localhost:11434/api/generate`).
+
+#   - Parses the response and returns the matched known question.
+
+#   - If the model responds with `"None"`, or if an error occurs (e.g., timeout, server issue), it returns `None`.
+
+# 
+
+# This mechanism is useful for handling flexible user input by grounding it to a fixed set of query types that can be handled downstream.
+
 # 
 
 # In[5]:
@@ -129,9 +141,12 @@ def question_map(question):
 
 
 
-# ### 🔎 Fuzzy Matching User Questions to Known Queries
-# 
-# This function `fuzzy_match_question` attempts to match a user's question to the most similar known question using fuzzy string matching.
+# ### 🔎 Fuzzy Matching User Questions to Known Queries
+
+# 
+
+# This function `fuzzy_match_question` attempts to match a user's question to the most similar known question using fuzzy string matching.
+
 # 
 
 # In[7]:
@@ -161,60 +176,114 @@ def fuzzy_match_question(user_question, threshold=80):
 
 
 
-# # 🚀 Full Flask API for Translating Natural Language to SQL Queries
-# 
-# This script implements a Flask API that accepts natural language questions, maps them to SQL queries for a MySQL cricket database (`cric_data`), executes those queries, and returns JSON results.
-# 
-# ---
-# 
-# ## ✅ 1. App Initialization
-# - Creates a Flask app instance via `Flask(__name__)`.
-# - Defines `db_config` with parameters for connecting to the MySQL `cric_data` database.
-# 
-# ---
-# 
-# ## 🔁 2. Question to SQL Mapping (`map_question_to_sql`)
-# - Maps user questions (in lowercase) to predefined SQL queries.
-# - Contains explicit mappings for known questions, returning SQL strings tailored for each.
-# - Returns `None` if no exact mapping is found.
-# 
-# ---
-# 
-# ## 🧠 3. Question Resolution Logic (inside `/query` POST endpoint)
-# - Receives a JSON POST with a `"question"` key.
-# - The logic proceeds in this order:
-#   1. **Direct Mapping:** Try to map the exact user question via `map_question_to_sql`.
-#   2. **LLM-Based Mapping:** If no direct SQL found, sends the user question to a local LLM API (`question_map()`) which attempts to find the closest known question phrasing, then tries SQL mapping again.
-#   3. **Fuzzy Matching:** If the LLM returns no match, attempts a fuzzy string match (`fuzzy_match_question()`) against known questions for approximate matching.
-#   4. If no SQL query is found after all steps, returns HTTP 400 with an error message.
-# 
-# ---
-# 
-# ## 🗄️ 4. SQL Execution
-# - Connects to MySQL using `mysql.connector` with `db_config`.
-# - Executes the generated SQL query and fetches results as dictionaries.
-# - Closes the database connection cleanly.
-# - Returns a JSON response containing:
-#   - The original user question.
-#   - The SQL query used (for debugging/clarity).
-#   - The query results.
-# - If SQL execution fails, returns HTTP 500 with the error message.
-# 
-# ---
-# 
-# ## 🧵 5. Running the Flask API
-# - Defines a `run_flask()` function that starts the Flask server on port 5000 with debugging enabled.
-# - Runs this function inside a background thread (`Thread(target=run_flask).start()`), so the server runs asynchronously (useful for running inside Jupyter or other environments without blocking).
-# 
-# ---
-# 
-# ## 🧩 Overall Workflow
-# - The API transforms flexible natural language questions into structured SQL commands by layering:
-#   - Direct keyword matching
-#   - Semantic LLM mapping
-#   - Fuzzy string matching
-# - This layered approach allows users to ask cricket-related questions in natural language and get accurate database responses.
-# ata using flexible natural language queries.
+# # 🚀 Full Flask API for Translating Natural Language to SQL Queries
+
+# 
+
+# This script implements a Flask API that accepts natural language questions, maps them to SQL queries for a MySQL cricket database (`cric_data`), executes those queries, and returns JSON results.
+
+# 
+
+# ---
+
+# 
+
+# ## ✅ 1. App Initialization
+
+# - Creates a Flask app instance via `Flask(__name__)`.
+
+# - Defines `db_config` with parameters for connecting to the MySQL `cric_data` database.
+
+# 
+
+# ---
+
+# 
+
+# ## 🔁 2. Question to SQL Mapping (`map_question_to_sql`)
+
+# - Maps user questions (in lowercase) to predefined SQL queries.
+
+# - Contains explicit mappings for known questions, returning SQL strings tailored for each.
+
+# - Returns `None` if no exact mapping is found.
+
+# 
+
+# ---
+
+# 
+
+# ## 🧠 3. Question Resolution Logic (inside `/query` POST endpoint)
+
+# - Receives a JSON POST with a `"question"` key.
+
+# - The logic proceeds in this order:
+
+#   1. **Direct Mapping:** Try to map the exact user question via `map_question_to_sql`.
+
+#   2. **LLM-Based Mapping:** If no direct SQL found, sends the user question to a local LLM API (`question_map()`) which attempts to find the closest known question phrasing, then tries SQL mapping again.
+
+#   3. **Fuzzy Matching:** If the LLM returns no match, attempts a fuzzy string match (`fuzzy_match_question()`) against known questions for approximate matching.
+
+#   4. If no SQL query is found after all steps, returns HTTP 400 with an error message.
+
+# 
+
+# ---
+
+# 
+
+# ## 🗄️ 4. SQL Execution
+
+# - Connects to MySQL using `mysql.connector` with `db_config`.
+
+# - Executes the generated SQL query and fetches results as dictionaries.
+
+# - Closes the database connection cleanly.
+
+# - Returns a JSON response containing:
+
+#   - The original user question.
+
+#   - The SQL query used (for debugging/clarity).
+
+#   - The query results.
+
+# - If SQL execution fails, returns HTTP 500 with the error message.
+
+# 
+
+# ---
+
+# 
+
+# ## 🧵 5. Running the Flask API
+
+# - Defines a `run_flask()` function that starts the Flask server on port 5000 with debugging enabled.
+
+# - Runs this function inside a background thread (`Thread(target=run_flask).start()`), so the server runs asynchronously (useful for running inside Jupyter or other environments without blocking).
+
+# 
+
+# ---
+
+# 
+
+# ## 🧩 Overall Workflow
+
+# - The API transforms flexible natural language questions into structured SQL commands by layering:
+
+#   - Direct keyword matching
+
+#   - Semantic LLM mapping
+
+#   - Fuzzy string matching
+
+# - This layered approach allows users to ask cricket-related questions in natural language and get accurate database responses.
+
+# ata using flexible natural language queries.
+
 # 
 
 # In[9]:
@@ -335,7 +404,7 @@ def map_question_to_sql(question):
                 SUM(CASE WHEN d.runs_batsman = 6 THEN 1 ELSE 0 END) AS sixes
             FROM deliveries d
             JOIN players p ON d.batsman_id = p.player_id
-            WHERE p.player_name = 'Virat Kohli'
+            WHERE p.player_name = 'V Kohli'
             GROUP BY d.batsman_id, p.player_name, d.match_id
         ),
         dismissals AS (
@@ -716,6 +785,7 @@ Thread(target=run_flask).start()
 
 
 # In[ ]:
+
 
 
 
