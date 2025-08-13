@@ -613,57 +613,34 @@ def map_question_to_sql(question):
 
     elif "show partnerships over 100 runs" in question:
         return """
-            WITH ordered_deliveries AS (
-            SELECT
-                d.match_id,
-                d.inning_num,
-                d.over_num,
-                d.ball_num,
-                d.batsman_id,
-                d.non_striker_id,
-                d.batting_team_id,
-                d.runs_batsman + d.runs_extras AS runs,
-                CASE WHEN w.wicket_id IS NOT NULL THEN 1 ELSE 0 END AS is_wicket,
-                SUM(CASE WHEN w.wicket_id IS NOT NULL THEN 1 ELSE 0 END) 
-                    OVER (PARTITION BY d.match_id, d.inning_num ORDER BY d.over_num, d.ball_num) AS partnership_num
-            FROM deliveries d
-            LEFT JOIN wickets w ON d.delivery_id = w.delivery_id
-        ),
-        
-        partnership_runs AS (
-            SELECT
-                match_id,
-                inning_num,
-                partnership_num,
-                batsman_id,
-                non_striker_id,
-                batting_team_id,
-                SUM(runs) AS partnership_runs,
-                COUNT(*) AS balls_faced
-            FROM ordered_deliveries
-            GROUP BY match_id, inning_num, partnership_num, batsman_id, non_striker_id, batting_team_id
-        ),
-        
-        partnerships_with_names AS (
-            SELECT
-                pr.match_id,
-                pr.inning_num,
-                pr.partnership_num,
-                t.team_name AS batting_team,
-                p1.player_name AS batsman,
-                p2.player_name AS non_striker,
-                pr.partnership_runs,
-                pr.balls_faced
-            FROM partnership_runs pr
-            JOIN players p1 ON pr.batsman_id = p1.player_id
-            JOIN players p2 ON pr.non_striker_id = p2.player_id
-            JOIN teams t ON pr.batting_team_id = t.team_id
-        )
-        
-        SELECT *
-        FROM partnerships_with_names
-        WHERE partnership_runs >= 100
-        ORDER BY partnership_runs DESC;
+            SELECT 
+            match_id,
+            batting_team_id,
+            bowling_team_id,
+            CONCAT(
+                GREATEST(p1.player_name, p2.player_name),
+                ' - ',
+                LEAST(p1.player_name, p2.player_name)
+            ) AS partnership,
+            SUM(runs_total) AS partnership_score
+        FROM deliveries AS d
+        JOIN players AS p1 
+            ON p1.player_id = d.batsman_id
+        JOIN players AS p2 
+            ON p2.player_id = d.non_striker_id
+        GROUP BY 
+            match_id,
+            batting_team_id,
+            bowling_team_id,
+            CONCAT(
+                GREATEST(p1.player_name, p2.player_name),
+                ' - ',
+                LEAST(p1.player_name, p2.player_name)
+            )
+        HAVING 
+            SUM(runs_total) >= 100
+        ORDER BY 
+            partnership_score DESC;
         """
 
     elif "which team has the best powerplay performance" in question:
@@ -785,6 +762,7 @@ Thread(target=run_flask).start()
 
 
 # In[ ]:
+
 
 
 
