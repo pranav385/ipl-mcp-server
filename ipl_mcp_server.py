@@ -295,7 +295,7 @@ db_config = {
     "host": "127.0.0.1",
     "port": 3306,
     "user": "root",
-    "password": "82107",
+    "password": "xyz",
     "database": "ipl_data",
     "ssl_disabled": True
 }
